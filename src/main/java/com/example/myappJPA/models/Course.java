@@ -1,18 +1,27 @@
 package com.example.myappJPA.models;
 
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Table(name = "course")
 public class Course {
-    private long courseId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int courseId;
     private String title;
     private String author;
-    private ArrayList<Module> modules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course")
+    private List<Module> modules;
 
     public long getId() {
         return courseId;
     }
 
-    public void setId(long courseId) {
+    public void setId(int courseId) {
         this.courseId = courseId;
     }
 
@@ -32,11 +41,11 @@ public class Course {
         this.title = title;
     }
 
-    public ArrayList<Module> getModules() {
+    public List<Module> getModules() {
         return modules;
     }
 
-    public void setModules(ArrayList<Module> courseModules) {
+    public void setModules(List<Module> courseModules) {
         this.modules = courseModules;
     }
 }

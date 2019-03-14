@@ -1,9 +1,8 @@
 package com.example.myappJPA.services;
 
-import com.example.myappJPA.models.Course;
-import com.example.myappJPA.models.Lesson;
+import com.example.myappJPA.models.*;
 import com.example.myappJPA.models.Module;
-import com.example.myappJPA.models.Topic;
+import com.example.myappJPA.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,64 +16,46 @@ public class TopicService {
     private LessonService lessonService;
 
     @Autowired
-    private CourseService courseService;
+    private TopicRepository topicRepository;
 
     @PostMapping("/api/lesson/{lid}/topic")
     public void createTopic(@PathVariable("lid") int lid, @RequestBody Topic topic) {
-        System.out.println("CREATE TOPIC ADD HIT");
-        lessonService.findLessonById(lid).getTopics().add(topic);
+        topic.setLesson(lessonService.findLessonById(lid));
+        topicRepository.save(topic);
     }
 
     @GetMapping("/api/lesson/{lid}/topic")
     public List<Topic> findAllTopics(@PathVariable("lid") int lid) {
-        return lessonService.findLessonById(lid).getTopics();
+        return topicRepository.findByLessonId(lid);
     }
 
     @GetMapping("/api/topic/{tid}")
     public Topic findTopicById(@PathVariable("tid") int tid) {
-        for (Course i : courseService.findAllCourses()) {
-            for (Module m : i.getModules()) {
-                for (Lesson l : m.getLessons()) {
-                    for (Topic t : l.getTopics()) {
-                        if (t.getId() == tid) {
-                            return t;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
+        return topicRepository.findById(tid).get();
     }
 
     @PutMapping("/api/topic/{tid}")
     public void updateTopic(@PathVariable("tid") int tid, @RequestBody Topic topic) {
-        for (Course i : courseService.findAllCourses()) {
-            for (Module m : i.getModules()) {
-                for (Lesson l : m.getLessons()) {
-                    for (Topic t : l.getTopics()) {
-                        if (t.getId() == tid) {
-                            t.setTitle(topic.getTitle());
-                        }
-                    }
-                }
-            }
-        }
+        Topic t = topicRepository.findById(tid).get();
+        t.setTitle(topic.getTitle());
+        topicRepository.save(t);
     }
 
     @DeleteMapping("/api/topic/{tid}")
     public void deleteTopic(@PathVariable("tid") int tid) {
-        for (Course i : courseService.findAllCourses()) {
-            for (Module m : i.getModules()) {
-                for (Lesson l : m.getLessons()) {
-                    Iterator itr = l.getTopics().iterator();
-                    while (itr.hasNext()) {
-                        Topic x = (Topic) itr.next();
-                        if (x.getId() == tid) {
-                            itr.remove();
-                        }
-                    }
-                }
-            }
-        }
+        topicRepository.deleteById(tid);
     }
+
+/*
+    @PostMapping("/api/topic/{tid}/widget")
+    public void createWidget(@PathVariable("tid") int tid, Widget widget) {
+        widget.setTopic(topicService.findTopicById(tid));
+        widgetRepository.save(widget);
+    }
+
+    @GetMapping("/api/topic/{tid}/widget")
+    public List<Widget> findAllWidgets(@PathVariable("tid") int tid, Widget widget) {
+        return (List<Widget>) widgetRepository.findAll();
+    }*/
+
 }

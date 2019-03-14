@@ -1,11 +1,33 @@
 package com.example.myappJPA.models;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "module")
 public class Module {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    private ArrayList<Lesson> lessons= new ArrayList<>();
+
+    @OneToMany(mappedBy = "module")
+    private List<Lesson> lessons;
+
+    @ManyToOne
+    @JsonIgnore
+    private Course course;
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 
     public int getId() {
         return id;
@@ -23,11 +45,11 @@ public class Module {
         this.title = moduleName;
     }
 
-    public ArrayList<Lesson> getLessons() {
+    public List<Lesson> getLessons() {
         return lessons;
     }
 
-    public void setLessons(ArrayList<Lesson> lessons) {
+    public void setLessons(List<Lesson> lessons) {
         this.lessons = lessons;
     }
 }

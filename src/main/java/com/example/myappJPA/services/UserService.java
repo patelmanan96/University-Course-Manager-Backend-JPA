@@ -1,8 +1,7 @@
 package com.example.myappJPA.services;
 
-import com.example.myappJPA.FacultyRepository;
-import com.example.myappJPA.models.Faculty;
-import com.example.myappJPA.models.Module;
+import com.example.myappJPA.repositories.UserRepository;
+import com.example.myappJPA.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,51 +13,37 @@ import java.util.List;
 @CrossOrigin(allowCredentials = "true",origins = "*")
 public class UserService {
     @Autowired
-    FacultyRepository repository;
-
-    private ArrayList<Faculty> userStore = new ArrayList<>();
+    UserRepository repository;
 
     @PostMapping("/api/register")
-    public Faculty register(@RequestBody Faculty user, HttpSession session) {
-        System.out.println("REQUEST HIT : " + user);
-        for(Faculty i: userStore){
-            if(i.getUsername().equals(user.getUsername())){
-                return new Faculty();
-            }
+    public User register(@RequestBody User user, HttpSession session) {
+        System.out.println("REGISTER HIT>>>>");
+        User check = repository.findByUsername(user.getUsername());
+        if(check != null && check.getUsername() != null){
+            return new User();
         }
-        userStore.add(user);
-        session.setAttribute("currentUser", user);
-        System.out.println("SESSION SET : "+((Faculty)session.getAttribute("currentUser")).getUsername());
+        repository.save(user);
+        session.setAttribute("currentUser",user);
+        System.out.println("REG : >>>>>>>" + ((User)session.getAttribute("currentUser")).getUsername());
         return user;
     }
 
 
     @GetMapping("/api/profile")
-    public Faculty profile(HttpSession session) {
-        Faculty toRet = (Faculty) session.getAttribute("currentUser");
-        if(toRet != null){
-            System.out.println("SESSION GET HIT : "+toRet.getUsername());
-            return toRet;
-        }
-        System.out.println("SESSION GET HIT : EMPTY");
-        return new Faculty();
+    public User profile(HttpSession session) {
+        User current = (User)session.getAttribute("currentUser");
+        return repository.findByUsername(current.getUsername());
     }
 
 
     @PostMapping("/api/login")
-    public Faculty login(@RequestBody Faculty user, HttpSession session) {
-        System.out.println("LOGIN REQ : "+user.getUsername());
-        Faculty inp = userStore.stream().filter(u -> u.getUsername()
-                .equals(user.getUsername()) &&
-                u.getPassword().equals(user.getPassword()))
-                .findAny()
-                .orElse(null);
-        if (inp != null) {
-            session.setAttribute("currentUser", inp);
-            System.out.println("REGISTERED : "+inp.getUsername());
-            return inp;
+    public User login(@RequestBody User user, HttpSession session) {
+        User toLogin = repository.findByUsername(user.getUsername());
+        if(toLogin != null && toLogin.getPassword().equals(user.getPassword())){
+            session.setAttribute("currentUser",toLogin);
+            return toLogin;
         }
-        return new Faculty();
+        return new User();
     }
 
     @GetMapping("/api/logout")
@@ -67,13 +52,14 @@ public class UserService {
     }
 
     @GetMapping("/api/users")
-    public List<Faculty> findAllUsers() {
-        System.out.println("ALL USERS HIT");
-        return userStore;
+    public List<User> findAllUsers() {
+        List<User> toRet = new ArrayList<>();
+        repository.findAll().forEach(toRet::add);
+        return toRet;
     }
 
     @GetMapping("api/users/{userId}")
-    public Faculty findUserById(@PathVariable("userId") int id) {
-        return userStore.stream().filter(user -> user.getUserId() == id).findAny().orElse(null);
+    public User findUserById(@PathVariable("userId") int id) {
+        return repository.findById(id).get();
     }
 }

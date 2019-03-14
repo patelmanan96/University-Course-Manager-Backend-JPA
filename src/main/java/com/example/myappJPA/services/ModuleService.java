@@ -2,11 +2,13 @@ package com.example.myappJPA.services;
 
 import com.example.myappJPA.models.Course;
 import com.example.myappJPA.models.Module;
+import com.example.myappJPA.repositories.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 @RestController
 @CrossOrigin(allowCredentials = "true",origins = "*")
@@ -14,52 +16,46 @@ public class ModuleService {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private ModuleRepository moduleRepository;
+
     @PostMapping("/api/courses/{cid}/modules")
     public void createModule(@PathVariable("cid") int courseId, @RequestBody Module module) {
-        courseService.findCourseById(courseId).getModules().add(module);
+        //moduleRepository.save(module);
+        //System.out.println("BEFORE : "+courseService.findCourseById(courseId).getModules().size());
+        //courseService.findCourseById(courseId).getModules().add(module);
+        Course c = courseService.findCourseById(courseId);
+        module.setCourse(c);
+        moduleRepository.save(module);
     }
 
     @GetMapping("/api/courses/{cid}/modules")
-    public ArrayList<Module> findAllModules(@PathVariable("cid") int courseId) {
-        System.out.println("MOD FIND HIT + "  + courseService.findCourseById(courseId).getModules());
-        return courseService.findCourseById(courseId).getModules();
+    public List<Module> findAllModules(@PathVariable("cid") int courseId) {
+        return moduleRepository.findByCourseId(courseId);
     }
 
     @GetMapping("/api/modules/{mid}")
     public Module findModuleById(@PathVariable("mid") int mid) {
-        for (Course c : courseService.findAllCourses()) {
+        return moduleRepository.findById(mid).get();
+        /*for (Course c : courseService.findAllCourses()) {
             for (Module m : c.getModules()) {
                 if (m.getId() == mid) {
                     return m;
                 }
             }
         }
-        return null;
+        return null;*/
     }
 
     @PutMapping("/api/modules/{mid}")
     public void updateModule(@PathVariable("mid") int mid, @RequestBody Module module) {
-        System.out.println(module.getTitle());
-        for (Course c : courseService.findAllCourses()) {
-            for (Module m : c.getModules()) {
-                if (m.getId() == mid) {
-                    m.setTitle(module.getTitle());
-                    m.setLessons(module.getLessons());
-                }
-            }
-        }
+        Module r = moduleRepository.findById(mid).get();
+        r.setTitle(module.getTitle());
+        moduleRepository.save(r);
     }
 
     @DeleteMapping("/api/modules/{mid}")
     public void deleteModule(@PathVariable("mid") int mid) {
-        for (Course i : courseService.findAllCourses()) {
-            Iterator itr = i.getModules().iterator();
-            while (itr.hasNext()) {
-                Module x = (Module) itr.next();
-                if (x.getId() == mid) {
-                    itr.remove();
-                }
-            }
-        }
+        moduleRepository.deleteById(mid);
     }
 }

@@ -1,17 +1,37 @@
 package com.example.myappJPA.models;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "lesson")
 public class Lesson {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    private ArrayList<Topic> topics = new ArrayList<>();
+    @OneToMany(mappedBy = "lesson")
+    private List<Topic> topics;
 
-    public ArrayList<Topic> getTopics() {
+    @ManyToOne
+    @JsonIgnore
+    private Module module;
+
+    public Module getModule() {
+        return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
+    }
+
+    public List<Topic> getTopics() {
         return topics;
     }
 
-    public void setTopics(ArrayList<Topic> topics) {
+    public void setTopics(List<Topic> topics) {
         this.topics = topics;
     }
 
