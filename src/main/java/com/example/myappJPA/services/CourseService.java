@@ -37,7 +37,9 @@ public class CourseService {
 
     @PutMapping("/api/courses/{cid}")
     public void updateCourse(@PathVariable("cid") int cid, @RequestBody Course course){
-        courseRepository.save(course);
+        Course c = courseRepository.findById(cid).get();
+        c.setTitle(course.getTitle());
+        courseRepository.save(c);
     }
 
     @DeleteMapping("/api/courses/{cid}")
@@ -48,7 +50,7 @@ public class CourseService {
     @GetMapping("/api/courses/sessionCourses")
     public List<Course> findCoursesForSessionUser(HttpSession session){
         String username = ((User)session.getAttribute("currentUser")).getUsername();
-        System.out.println("U NAME: " + username);
+        //System.out.println("U NAME: " + username);
         return courseRepository.findCourseByAuthor(username);
     }
 }

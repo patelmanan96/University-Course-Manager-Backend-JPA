@@ -17,14 +17,14 @@ public class UserService {
 
     @PostMapping("/api/register")
     public User register(@RequestBody User user, HttpSession session) {
-        System.out.println("REGISTER HIT>>>>");
+        //System.out.println("REGISTER HIT>>>>");
         User check = repository.findByUsername(user.getUsername());
         if(check != null && check.getUsername() != null){
             return new User();
         }
         repository.save(user);
         session.setAttribute("currentUser",user);
-        System.out.println("REG : >>>>>>>" + ((User)session.getAttribute("currentUser")).getUsername());
+        //System.out.println("REG : >>>>>>>" + ((User)session.getAttribute("currentUser")).getUsername());
         return user;
     }
 

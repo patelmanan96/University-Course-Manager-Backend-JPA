@@ -36,9 +36,9 @@ public class WidgetService {
     @PostMapping("/api/topic/{tid}/widget")
     public void createWidget(@PathVariable("tid") int tid,@RequestBody Widget widget) {
         widget.setTopic(topicService.findTopicById(tid));
-        System.out.println("WT : "+ widget.getType());
+        /*System.out.println("WT : "+ widget.getType());
         System.out.println(widget.getTopic().getTitle());
-        System.out.println(widget.getId());
+        System.out.println(widget.getId());*/
         widgetRepository.save(widget);
     }
 

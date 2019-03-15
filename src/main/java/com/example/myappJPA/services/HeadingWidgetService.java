@@ -35,12 +35,12 @@ public class HeadingWidgetService {
 
     @PostMapping("/api/topic/{tid}/headingWidget")
     public void createWidget(@PathVariable("tid") int tid, @RequestBody HeadingWidget widget) {
-        System.out.println("HERE>>>>>>>>>>>>>>>");
+        /*System.out.println("HERE>>>>>>>>>>>>>>>");
         System.out.println(widget.getHeadingText());
         System.out.println(widget.getSize());
-        System.out.println(widget.getType());
+        System.out.println(widget.getType());*/
         widget.setTopic(topicService.findTopicById(tid));
-        System.out.println(widget.getHeadingText());
+        //System.out.println(widget.getHeadingText());
         headingWidgetRepository.save(widget);
     }
 
