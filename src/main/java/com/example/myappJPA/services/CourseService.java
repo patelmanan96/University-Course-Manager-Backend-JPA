@@ -1,5 +1,6 @@
 package com.example.myappJPA.services;
 
+import com.example.myappJPA.models.Module;
 import com.example.myappJPA.repositories.CourseRepository;
 import com.example.myappJPA.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,18 @@ public class CourseService {
 
     @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
+    private TopicService topicService;
+
+    @Autowired
+    private LessonService lessonService;
+
+    @Autowired
+    private WidgetService widgetService;
+
+    @Autowired
+    private ModuleService moduleService;
 
     @PostMapping("/api/courses")
     public void createCourse(@RequestBody Course course){
@@ -44,6 +57,19 @@ public class CourseService {
 
     @DeleteMapping("/api/courses/{cid}")
     public void deleteCourse(@PathVariable("cid") int cid){
+        courseRepository.deleteById(cid);
+        for(Module m : moduleService.findAllModules(cid)){
+            for(Lesson l : lessonService.findAllLessons(m.getId())){
+                for(Topic t: topicService.findAllTopics(l.getId())){
+                    for(Widget w : widgetService.findAllWidgets(t.getId())){
+                        widgetService.deleteWidget(w.getId());
+                    }
+                    topicService.deleteTopic(t.getId());
+                }
+                lessonService.deleteLesson(l.getId());
+            }
+            moduleService.deleteModule(m.getId());
+        }
         courseRepository.deleteById(cid);
     }
 
