@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(allowCredentials = "true",origins = "*")
 public class HeadingWidgetService {
     @Autowired
     HeadingWidgetRepository headingWidgetRepository;
@@ -37,13 +38,13 @@ public class HeadingWidgetService {
         System.out.println("HERE>>>>>>>>>>>>>>>");
         System.out.println(widget.getHeadingText());
         System.out.println(widget.getSize());
-        System.out.println(widget.getWidgetType());
+        System.out.println(widget.getType());
         widget.setTopic(topicService.findTopicById(tid));
         System.out.println(widget.getHeadingText());
         headingWidgetRepository.save(widget);
     }
 
-    @GetMapping("/api/topic/headingWidget")
+    @GetMapping("/api/headingWidget")
     public List<HeadingWidget> findAllWidgets() {
         return (List<HeadingWidget>) headingWidgetRepository.findAll();
     }

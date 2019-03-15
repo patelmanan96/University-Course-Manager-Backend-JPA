@@ -1,6 +1,8 @@
 package com.example.myappJPA.services;
 
 import com.example.myappJPA.models.Lesson;
+import com.example.myappJPA.models.Topic;
+import com.example.myappJPA.models.Widget;
 import com.example.myappJPA.repositories.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,8 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(allowCredentials = "true",origins = "*")
+@CrossOrigin(allowCredentials = "true", origins = "*")
 public class LessonService {
+    @Autowired
+    private TopicService topicService;
+
+    @Autowired
+    private WidgetService widgetService;
+
     @Autowired
     private ModuleService moduleService;
 
@@ -41,6 +49,12 @@ public class LessonService {
 
     @DeleteMapping("/api/lesson/{lid}")
     public void deleteLesson(@PathVariable("lid") int lid) {
+        for (Topic t : topicService.findAllTopics(lid)) {
+            for (Widget w : widgetService.findAllWidgets(t.getId())) {
+                widgetService.deleteWidget(w.getId());
+            }
+            topicService.deleteTopic(t.getId());
+        }
         lessonRepository.deleteById(lid);
     }
 }

@@ -6,8 +6,8 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("list")
 public class ListWidget extends Widget{
-    String listType;
-    String listItems;
+    private String listType;
+    private String listItems = "";
 
     public String getListType() {
         return listType;

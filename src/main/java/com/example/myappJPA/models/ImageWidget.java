@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("image")
 public class ImageWidget extends Widget{
+
     String src;
 
     public String getSrc() {

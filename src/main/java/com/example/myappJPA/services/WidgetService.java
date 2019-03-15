@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(allowCredentials = "true",origins = "*")
+
 public class WidgetService {
     @Autowired
     WidgetRepository widgetRepository;
@@ -21,8 +23,7 @@ public class WidgetService {
     }
 
     @PutMapping("/api/widget/{wid}")
-    public void updateWidget(@PathVariable("wid") int wid,@RequestBody
-            Widget widget) {
+    public void updateWidget(@PathVariable("wid") int wid,@RequestBody Widget widget) {
         widgetRepository.deleteById(wid);
         widgetRepository.save(widget);
     }
@@ -35,7 +36,7 @@ public class WidgetService {
     @PostMapping("/api/topic/{tid}/widget")
     public void createWidget(@PathVariable("tid") int tid,@RequestBody Widget widget) {
         widget.setTopic(topicService.findTopicById(tid));
-        System.out.println("WT : "+ widget.getWidgetType());
+        System.out.println("WT : "+ widget.getType());
         System.out.println(widget.getTopic().getTitle());
         System.out.println(widget.getId());
         widgetRepository.save(widget);
@@ -43,7 +44,13 @@ public class WidgetService {
 
     @GetMapping("/api/topic/{tid}/widget")
     public List<Widget> findAllWidgets(@PathVariable("tid") int tid) {
-        return (List<Widget>) widgetRepository.findAll();
+        return widgetRepository.findByTopicId(tid);
     }
 
+    @DeleteMapping("/api/topic/{tid}/widget")
+    public void deleteWidgetsOfTopic(@PathVariable("tid") int tid){
+        for (Widget w : this.findAllWidgets(tid)) {
+            this.deleteWidget(w.getId());
+        }
+    }
 }

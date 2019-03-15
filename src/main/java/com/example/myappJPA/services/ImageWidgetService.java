@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(allowCredentials = "true",origins = "*")
 public class ImageWidgetService {
     @Autowired
     ImageWidgetRepository imageWidgetRepository;
@@ -40,7 +41,7 @@ public class ImageWidgetService {
         imageWidgetRepository.save(widget);
     }
 
-    @GetMapping("/api/topic/imageWidget")
+    @GetMapping("/api/imageWidget")
     public List<ImageWidget> findAllWidgets() {
         return (List<ImageWidget>) imageWidgetRepository.findAll();
     }

@@ -10,8 +10,11 @@ import java.util.Iterator;
 import java.util.List;
 
 @RestController
-@CrossOrigin(allowCredentials = "true",origins = "*")
+@CrossOrigin(allowCredentials = "true", origins = "*")
 public class TopicService {
+    @Autowired
+    WidgetService widgetService;
+
     @Autowired
     private LessonService lessonService;
 
@@ -43,6 +46,9 @@ public class TopicService {
 
     @DeleteMapping("/api/topic/{tid}")
     public void deleteTopic(@PathVariable("tid") int tid) {
+        for (Widget w : widgetService.findAllWidgets(tid)) {
+            widgetService.deleteWidget(w.getId());
+        }
         topicRepository.deleteById(tid);
     }
 

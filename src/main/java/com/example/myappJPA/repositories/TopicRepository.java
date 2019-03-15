@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface TopicRepository extends CrudRepository<Topic, Integer> {
 
-    @Query("SELECT topics FROM Topic topics WHERE topics.lesson.id =: lid")
+    @Query("SELECT topics FROM Topic topics WHERE topics.lesson.id =:lid")
     List<Topic> findByLessonId(@Param("lid") int lid);
 }

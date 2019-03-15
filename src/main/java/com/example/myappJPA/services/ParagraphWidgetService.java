@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(allowCredentials = "true",origins = "*")
+
 public class ParagraphWidgetService {
     @Autowired
     ParagraphWidgetRepository paragraphWidgetRepository;
@@ -39,7 +41,7 @@ public class ParagraphWidgetService {
         paragraphWidgetRepository.save(widget);
     }
 
-    @GetMapping("/api/topic/paragraphWidget")
+    @GetMapping("/api/paragraphWidget")
     public List<ParagraphWidget> findAllWidgets() {
         return (List<ParagraphWidget>) paragraphWidgetRepository.findAll();
     }

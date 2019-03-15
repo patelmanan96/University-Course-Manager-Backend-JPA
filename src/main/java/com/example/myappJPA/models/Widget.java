@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "widget")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name ="type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name ="widgetType", discriminatorType = DiscriminatorType.STRING)
 public class Widget {
     public Widget(){
     }
@@ -16,7 +16,7 @@ public class Widget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String widgetType;
+    private String type;
     private boolean toggle = false;
 
     @ManyToOne
@@ -47,11 +47,11 @@ public class Widget {
         this.id = id;
     }
 
-    public String getWidgetType() {
-        return widgetType;
+    public String getType() {
+        return type;
     }
 
-    public void setWidgetType(String widgetType) {
-        this.widgetType = widgetType;
+    public void setType(String type) {
+        this.type = type;
     }
 }

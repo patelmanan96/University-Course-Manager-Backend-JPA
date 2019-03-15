@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(allowCredentials = "true",origins = "*")
+
 public class ListWidgetService {
 
     @Autowired
@@ -41,7 +43,7 @@ public class ListWidgetService {
         listWidgetRepository.save(widget);
     }
 
-    @GetMapping("/api/topic/listWidget")
+    @GetMapping("/api/listWidget")
     public List<ListWidget> findAllWidgets() {
         return (List<ListWidget>) listWidgetRepository.findAll();
     }
