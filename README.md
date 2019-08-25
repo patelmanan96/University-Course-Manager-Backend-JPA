@@ -1,1 +1,1 @@
-# cs5610-spring19-jpa
+# University-Course-Manager-Backend-JPA
